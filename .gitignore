@@ -1,0 +1,6 @@
+settings.json
+.env
+files/
+__pycache__/
+*.pdf
+temp.py
