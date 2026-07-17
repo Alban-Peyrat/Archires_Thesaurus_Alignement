@@ -27,6 +27,9 @@ class Metaterm(object):
         self.pref_labels:List[Term] = []
         self.alt_labels:List[Term] = []
     
-    def get_pref_label(self) -> str:
+    def get_label(self, is_pref:bool=True) -> str:
         """Returns all pref labels as a string"""
-        return " --- ".join([term.label for term in self.pref_labels])
+        separator = " $$$ "
+        if is_pref:
+            return separator.join([term.label for term in self.pref_labels])
+        return separator.join([term.label for term in self.alt_labels])

@@ -11,13 +11,17 @@ Basé sur le script créé pour aligner le thésaurus géographique de l'IPRAUS 
 
 Cette méthode utilise plusieurs manières d'identifier une autorité correspondante, de la plus précise à la plus large :
 
-* [0] Match exact (`EXACT`)
-* [1] Match sur fingerprint (`FINGERPRINT`)
-* [2] Match sur fingerprint & suppression de mots-vides (`FINGERPRINT_STOP_WORDS`)
-* [3] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) (`FINGERPRINT_STOP_WORDS_EXTENDED`)
-* [4] Match sur fingerprint en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS`)
-* [5] Match sur fingerprint & suppression de mots-vides en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS`)
-* [6] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS_EXTENDED`)
+* [100] Match exact (`EXACT`)
+* [200] Match sur fingerprint (`FINGERPRINT`)
+* [230] Match sur fingerprint & suppression de mots-vides (`FINGERPRINT_STOP_WORDS`)
+* [260] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) (`FINGERPRINT_STOP_WORDS_EXTENDED`)
+* [300] Match sur fingerprint en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS`)
+* [330] Match sur fingerprint & suppression de mots-vides en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS`)
+* [360] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS_EXTENDED`)
+* [400] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles (`FINGERPRINT_REORDERED`)
+* [430] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles & suppression de mots-vides en enlevant avant les contenus entre parenthèse (`FINGERPRINT_REORDERED_STOP_WORDS`)
+* [460] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles & suppression de mots-vides & expressions type (province, Wilaya, etc.) en enlevant avant les contenus entre parenthèse (`FINGERPRINT_REORDERED_STOP_WORDS_EXTENDED`)
+
 
 ## Utiliser l'application
 

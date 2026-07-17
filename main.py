@@ -7,13 +7,15 @@ import csv
 from typing import List, Dict
 
 # Internal imports
-from ress.enums import TSV_Headers, Step
+from ress.enums import TSV_Headers, TSV_Synthesis_Headers, Step
 from ress.class_thesaurus import Thesaurus
 from ress.class_terms import Term
+from ress.class_synthesis import Synthesis_Metaterm
+from ress.func_enums import step_for_output
 
 # To do :
 # - user should be able to chose wich steps they want
-# - maybe : 1 CSV file with only 1 lien per metaterm ID
+# list of other terms should be another file 
 
 # ----------------- Load configs -----------------
 load_dotenv()
@@ -22,6 +24,8 @@ external_thes = Thesaurus(os.getenv("EXTERNAL_THES_PATH"), os.getenv("EXTERNAL_T
 print(f"External thesaurus is loaded : {external_thes.nb_metaterms} terms")
 internal_thes = Thesaurus(os.getenv("INTERNAL_THES_PATH"), os.getenv("INTERNAL_THES_DELIMITER"), os.getenv("INTERNAL_THES_ID_COL"))
 print(f"Internal thesaurus is loaded : {internal_thes.nb_metaterms} terms")
+# -------- Prepare synthesis --------
+output_synthesis_list:Dict[str, Synthesis_Metaterm] = {}
 
 # ----------------- Func def -----------------
 def match_term(term:Term, is_pref:bool=True) -> dict:
@@ -44,9 +48,10 @@ def match_term(term:Term, is_pref:bool=True) -> dict:
             for matched_id in matched_ids:
                 matched_term = internal_thes.get_metaterm_by_id(matched_id)
                 if matched_term:
-                    output[TSV_Headers.INT_NAMES.value].append(matched_term.get_pref_label())
+                    output[TSV_Headers.INT_NAMES.value].append(matched_term.get_label())
+                    output_synthesis_list[id].add_metaterm_match(matched_term.id, matched_term.get_label(), matched_term.get_label(is_pref=False), step)
             output[TSV_Headers.NB_MATCH.value] = len(matched_ids)
-            output[TSV_Headers.STEP.value] = step.name
+            output[TSV_Headers.STEP.value] = step_for_output(step)
             output[TSV_Headers.KEY_USED.value] = term.forms[step]
             break
     # Join lists
@@ -66,7 +71,9 @@ for index, id in enumerate(external_thes.term_index):
     # Give user info on progression
     if index % 1000 == 0:
         print(f"Starting term {index}")
+    # get the metaterm and prepare it's synthesis
     metaterm = external_thes.term_index[id]
+    output_synthesis_list[id] = Synthesis_Metaterm(id, metaterm.get_label(), metaterm.get_label(is_pref=False))
     # Loop through each term inside this meta terme
     for term in metaterm.pref_labels:
         output_list.append(match_term(term, is_pref=True))
@@ -80,3 +87,9 @@ with open(os.getenv("OUTPUT_PATH"), "w", newline="", encoding="utf-8") as f:
     for output in output_list:
         writer.writerow(output)
     
+# Synthesis output
+with open(os.getenv("OUTPUT_SYNTHESIS_PATH"), "w", newline="", encoding="utf-8") as f:
+    writer = csv.DictWriter(f, [val.value for val in TSV_Synthesis_Headers], delimiter="\t")
+    writer.writeheader()
+    for id in list(output_synthesis_list.keys()):
+        writer.writerow(output_synthesis_list[id].CSV_output())
