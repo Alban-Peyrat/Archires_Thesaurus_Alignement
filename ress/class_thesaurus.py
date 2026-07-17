@@ -24,7 +24,7 @@ class Thesaurus(object):
         with open(self.file_path, "r", encoding="utf-8") as f:
             csv_reader = csv.DictReader(f, delimiter=self.delimiter)
             for row in csv_reader:
-                self.add_term(row[self.id_col_name], row["prefLabel@fr"], row["altLabel@fr"])
+                self.add_term(row[self.id_col_name], row["prefLabel"], row["altLabel"])
                 # term = Term(row[self.id_col_name], row["prefLabel@fr"])
                 # # Add the term to the ID-Term index
                 # self.term_index[term.id] = term

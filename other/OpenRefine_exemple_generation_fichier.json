@@ -1,0 +1,65 @@
+[
+  {
+    "op": "core/multivalued-cell-split",
+    "columnName": "215",
+    "keyColumnName": "001",
+    "mode": "separator",
+    "separator": "###",
+    "regex": false
+  },
+  {
+    "op": "core/multivalued-cell-split",
+    "columnName": "415",
+    "keyColumnName": "001",
+    "mode": "separator",
+    "separator": "###",
+    "regex": false
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "215",
+    "expression": "grel:value.strip().substring(2).replace(/\\$[^axyz].+?(?=\\$)/, \"\").replace(/\\$./, \" \").split(\" \").join(\" \")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/text-transform",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "415",
+    "expression": "grel:value.strip().substring(2).replace(/\\$[^axyz].+?(?=\\$)/, \"\").replace(\";\", \"\").replace(/\\$./, \" \").split(\" \").join(\" \")",
+    "onError": "keep-original",
+    "repeat": false,
+    "repeatCount": 10
+  },
+  {
+    "op": "core/fill-down",
+    "engineConfig": {
+      "facets": [],
+      "mode": "row-based"
+    },
+    "columnName": "001"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "001",
+    "newColumnName": "authid"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "215",
+    "newColumnName": "prefLabel"
+  },
+  {
+    "op": "core/column-rename",
+    "oldColumnName": "415",
+    "newColumnName": "altLabel"
+  }
+]
