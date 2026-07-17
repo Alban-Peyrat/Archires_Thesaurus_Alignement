@@ -33,7 +33,8 @@ Cette méthode utilise plusieurs manières d'identifier une autorité correspond
   * `INTERNAL_THES_PATH` : chemin d'accès au fichier contenant le thésaurus "interne"
   * `INTERNAL_THES_DELIMITER` : séparateur utilisé dans le fichier contenant le thésaurus "interne"
   * `INTERNAL_THES_ID_COL` : nom de la colonne contenant l'identifiant dans le fichier contenant le thésaurus "interne"
-  * `OUTPUT_PATH` : chemin d'accès pour le fichier de sortie
+  * `OUTPUT_PATH` : chemin d'accès pour le fichier de sortie contenant toutes les formes
+  * `OUTPUT_SYNTHESIS_PATH` : chemin d'accès pour le fichier de sortie qui synthètise par identifiant
 * Exécuter l'application (`main.py`)
 
 ## Fichiers attendus

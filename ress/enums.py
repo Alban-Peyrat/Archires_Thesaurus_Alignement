@@ -28,7 +28,7 @@ class TSV_Headers(Enum):
 class TSV_Synthesis_Headers(Enum):
     EXT_ID = "external_ID"
     EXT_PREFLABEL = "external_prefLabel"
-    EXT_ALTLABEL = "external_prefLabel"
+    EXT_ALTLABEL = "external_altLabel"
     INT_ID = "matched_internal_IDs"
     INT_PREFLABEL = "matched_internal_prefLabels"
     INT_ALTLABEL = "matched_internal_altLabels"
