@@ -25,7 +25,7 @@ Cette méthode utilise plusieurs manières d'identifier une autorité correspond
 
 ## Utiliser l'application
 
-* Préparer [les fichiers attendus](#fichiers-attendus)
+* Préparer [les fichiers attendus](#fichiers-de-thésaurus-attendus)
 * Définir les variables d'environnement :
   * `EXTERNAL_THES_PATH` : chemin d'accès au fichier contenant le thésaurus "externe"
   * `EXTERNAL_THES_DELIMITER` : séparateur utilisé dans le fichier contenant le thésaurus "externe"
@@ -33,11 +33,12 @@ Cette méthode utilise plusieurs manières d'identifier une autorité correspond
   * `INTERNAL_THES_PATH` : chemin d'accès au fichier contenant le thésaurus "interne"
   * `INTERNAL_THES_DELIMITER` : séparateur utilisé dans le fichier contenant le thésaurus "interne"
   * `INTERNAL_THES_ID_COL` : nom de la colonne contenant l'identifiant dans le fichier contenant le thésaurus "interne"
+  * `EXTENDED_WORDS_LIST` : [facultatif] chemin d'accès au fichier contenant la liste des termes à supprimer dans les étapes `_EXTENDED`
   * `OUTPUT_PATH` : chemin d'accès pour le fichier de sortie contenant toutes les formes
   * `OUTPUT_SYNTHESIS_PATH` : chemin d'accès pour le fichier de sortie qui synthètise par identifiant
 * Exécuter l'application (`main.py`)
 
-## Fichiers attendus
+## Fichiers de thésaurus attendus
 
 Chaque thésaurus doit être contenu dans un fichier tabulé respectant les conditions suivantes :
 
@@ -50,7 +51,7 @@ Chaque thésaurus doit être contenu dans un fichier tabulé respectant les cond
   * Exemples : `123;Paris;Paris (France)`, `123;Paris;`, `123;;Paris (France)`, `123;;`
 * Un identifiant peut apparaître sur autant de ligne que nécessaire
 
-## Exemple de génération de fichiers à partir de Koha
+## Exemple de génération de fichiers de thésaurus à partir de Koha
 
 _Note : exemple pour un export de notices d'autorités géographiques, avec le label préférentiel en `215` et le label alternatif en `415`_
 
@@ -75,3 +76,12 @@ _Note : exemple pour un export de notices d'autorités géographiques, avec le l
   * Dans l'onglet _Download_, cocher _Custom separator_ et indiquer la valeur `;`
   * Vérifier que la avleur dans _Line separator_ est `\n`
   * Cocher _Always quote text_
+
+## Fichier des termes supprimés attendus
+
+* Un terme par ligne
+* Les termes doivent être :
+  * En minuscule
+  * Sans diacritique
+  * Les tirets, apostrophes et autres sont remplacés par un espace
+  * Les termes peuvent être composé de plusieurs mots, mais séparés par un seul espace

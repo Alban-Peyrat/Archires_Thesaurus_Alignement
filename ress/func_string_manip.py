@@ -3,6 +3,7 @@
 # Etxernal import
 import re
 from unidecode import unidecode
+from typing import List
 
 # From FCR 2.0.1, with slight modifications versions
 def prep_string(_str:str, _noise = True, _multiplespaces = True) -> str:
@@ -21,10 +22,9 @@ def prep_string(_str:str, _noise = True, _multiplespaces = True) -> str:
         _str = re.sub(r"\s+", " ", _str).strip()
     return _str.strip().lower()
 
-def remove_extended_stop_words(txt:str) -> str:
+def remove_extended_stop_words(txt:str, words_list:List[str]) -> str:
     """Deleted every extended stop words"""
-    extended_stop_word_list = ["province", "wilaya", "quartier", "cite", "gouvernat", "basilique", "region", "ile", "iles", "etat", "district", "autonome", "territoire", "prefecture", "monastere", "temple", "special", "administratif", "arrondissement", "parc", "musee", "zac", "zup", "place", "porte", "arr", "site archeologique", "principaute", "anchal", "cours eau", "land", "chateau"]
-    for word in extended_stop_word_list:
+    for word in words_list:
         txt = txt.replace(word, " ")
     return txt
     
@@ -44,7 +44,7 @@ def sort_words(txt:str) -> str:
     """Returns the string sorting all the elements"""
     return " ".join(sorted(txt.split()))
 
-def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:bool=False, no_parenthesis:bool=False) -> str:
+def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:List[str]=[], no_parenthesis:bool=False) -> str:
     """Returns the string using a kind of fingerprint"""
     txt = txt.lower()
     txt = txt.replace('&', 'et')
@@ -65,8 +65,8 @@ def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:bool=False, 
     if stop_words:
         txt = delete_Sudoc_empty_words(delete_CBS_boolean_operators(txt))
     # If no extended stop words, remove them
-    if stop_words_extended:
-        txt = remove_extended_stop_words(txt)
+    if len(stop_words_extended) > 0:
+        txt = remove_extended_stop_words(txt, stop_words_extended)
     # Retrigger final prep string just in case
     txt = prep_string(txt)
     return sort_words(txt)

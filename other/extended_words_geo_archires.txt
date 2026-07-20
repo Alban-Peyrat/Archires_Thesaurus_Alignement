@@ -1,0 +1,35 @@
+administratif
+anchal
+arr
+arrondissement
+autonome
+basilique
+cathedrale
+chateau
+cite
+cours eau
+district
+eglise
+etat
+gouvernat
+ile
+iles
+land
+monastere
+musee
+parc
+place
+porte
+prefecture
+principaute
+province
+quartier
+region
+site archeologique
+special
+temple
+territoire
+village
+wilaya
+zac
+zup

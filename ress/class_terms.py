@@ -8,7 +8,7 @@ from ress.func_string_manip import fingerprint
 
 class Term(object):
     # def __init__(self, id:str, pref_label:str): #original
-    def __init__(self, id:str, label:str):
+    def __init__(self, id:str, label:str, extended_words:List[str]):
         self.id = id
         # self.pref_label = pref_label #original
         self.label = label
@@ -16,10 +16,10 @@ class Term(object):
         self.forms[Step.EXACT] = self.label
         self.forms[Step.FINGERPRINT] = fingerprint(self.label)
         self.forms[Step.FINGERPRINT_STOP_WORDS] = fingerprint(self.label, stop_words=True)
-        self.forms[Step.FINGERPRINT_STOP_WORDS_EXTENDED] = fingerprint(self.label, stop_words=True, stop_words_extended=True)
+        self.forms[Step.FINGERPRINT_STOP_WORDS_EXTENDED] = fingerprint(self.label, stop_words=True, stop_words_extended=extended_words)
         self.forms[Step.FINGERPRINT_NO_PARENTHESIS] = fingerprint(self.label, no_parenthesis=True)
         self.forms[Step.FINGERPRINT_NO_PARENTHESIS_STOP_WORDS] = fingerprint(self.label, stop_words=True, no_parenthesis=True)
-        self.forms[Step.FINGERPRINT_NO_PARENTHESIS_STOP_WORDS_EXTENDED] = fingerprint(self.label, stop_words=True, stop_words_extended=True, no_parenthesis=True)
+        self.forms[Step.FINGERPRINT_NO_PARENTHESIS_STOP_WORDS_EXTENDED] = fingerprint(self.label, stop_words=True, stop_words_extended=extended_words, no_parenthesis=True)
 
 class Metaterm(object):
     def __init__(self, id:str):

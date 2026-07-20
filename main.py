@@ -19,11 +19,20 @@ from ress.func_enums import step_for_output
 
 # ----------------- Load configs -----------------
 load_dotenv()
+# -------- Load extended words --------
+extended_words_list = []
+if os.path.exists(os.getenv("EXTENDED_WORDS_LIST")):
+    with open(os.getenv("EXTENDED_WORDS_LIST"), "r", encoding="utf-8") as f:
+        extended_words_list = f.read().splitlines()
+else:
+    print("Waring : extended words file was not found")
+    print("Ignoring all related steps")
 # -------- Load thesaurus --------
-external_thes = Thesaurus(os.getenv("EXTERNAL_THES_PATH"), os.getenv("EXTERNAL_THES_DELIMITER"), os.getenv("EXTERNAL_THES_ID_COL"))
+external_thes = Thesaurus(os.getenv("EXTERNAL_THES_PATH"), os.getenv("EXTERNAL_THES_DELIMITER"), os.getenv("EXTERNAL_THES_ID_COL"), extended_words=extended_words_list)
 print(f"External thesaurus is loaded : {external_thes.nb_metaterms} terms")
-internal_thes = Thesaurus(os.getenv("INTERNAL_THES_PATH"), os.getenv("INTERNAL_THES_DELIMITER"), os.getenv("INTERNAL_THES_ID_COL"))
+internal_thes = Thesaurus(os.getenv("INTERNAL_THES_PATH"), os.getenv("INTERNAL_THES_DELIMITER"), os.getenv("INTERNAL_THES_ID_COL"), extended_words=extended_words_list)
 print(f"Internal thesaurus is loaded : {internal_thes.nb_metaterms} terms")
+
 # -------- Prepare synthesis --------
 output_synthesis_list:Dict[str, Synthesis_Metaterm] = {}
 

@@ -8,13 +8,14 @@ from ress.enums import Step
 from ress.class_terms import Metaterm, Term
 
 class Thesaurus(object):
-    def __init__(self, file_path:str, delimiter:str, id_col_name:str):
+    def __init__(self, file_path:str, delimiter:str, id_col_name:str, extended_words:List[str]=[]):
         self.file_path:str = file_path
         self.delimiter:str = delimiter
         # Makes sure that escaped strigns are not escaped
         if "\\" in self.delimiter:
             self.delimiter = self.delimiter.encode("latin-1", "backslashreplace").decode("unicode-escape")
         self.id_col_name:str = id_col_name
+        self.extended_words:List[str] = extended_words
         # self.term_index:dict[str, Term] = {} # orignal one
         self.term_index:dict[str, Metaterm] = {}
         self.indexes:Dict[Step, Dict[str, List[str]]] = {}
@@ -54,9 +55,9 @@ class Thesaurus(object):
         
         # Adds the labels to the metaterm list if the label is not empty
         if pref_label != "":
-            self.term_index[id].pref_labels.append(Term(id, pref_label))
+            self.term_index[id].pref_labels.append(Term(id, pref_label, self.extended_words))
         if alt_label != "":
-            self.term_index[id].alt_labels.append(Term(id, alt_label))
+            self.term_index[id].alt_labels.append(Term(id, alt_label, self.extended_words))
 
     @property
     def nb_metaterms(self):
