@@ -3,25 +3,54 @@
 [![Active Development](https://img.shields.io/badge/Maintenance%20Level-Actively%20Developed-brightgreen.svg)](https://gist.github.com/cheerfulstoic/d107229326a01ff0f333a1d3476e068d)
 
 Permet d'aligner 2 thésaurus en comparant le libellé des termes du thésaurus "externe" à ceux du thésaurus "interne".
-Un même terme, identifié par son identifiant, peut avoir un ou plusieurs labels préférentiels ainsi qu'antant de label alternatifs que nécessiare, ou aucun.
+Un même terme, identifié par son identifiant, peut avoir un ou plusieurs labels préférentiels ainsi qu'autant de label alternatifs que nécessaire, ou aucun.
 
-Basé sur le script créé pour aligner le thésaurus géographique de l'IPRAUS avec ceux d'ArchiRès
+Basé sur le script créé pour aligner le thésaurus géographique de l'IPRAUS avec ceux d'ArchiRès.
 
 ## Fonctionnement
 
-Cette méthode utilise plusieurs manières d'identifier une autorité correspondante, de la plus précise à la plus large :
+Ce script peut utiliser plusieurs étapes pour aligner des autorités :
 
 * [100] Match exact (`EXACT`)
-* [200] Match sur fingerprint (`FINGERPRINT`)
-* [230] Match sur fingerprint & suppression de mots-vides (`FINGERPRINT_STOP_WORDS`)
-* [260] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) (`FINGERPRINT_STOP_WORDS_EXTENDED`)
-* [300] Match sur fingerprint en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS`)
-* [330] Match sur fingerprint & suppression de mots-vides en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS`)
-* [360] Match sur fingerprint & suppression de mots-vides & expressions type (province, Wilaya, etc.) en enlevant avant les contenus entre parenthèse (`FINGERPRINT_NO_PARENTHESIS_STOP_WORDS_EXTENDED`)
-* [400] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles (`FINGERPRINT_REORDERED`)
-* [430] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles & suppression de mots-vides en enlevant avant les contenus entre parenthèse (`FINGERPRINT_REORDERED_STOP_WORDS`)
-* [460] Match sur fingerprint en réordonnant les mots et supprimant les mots doubles & suppression de mots-vides & expressions type (province, Wilaya, etc.) en enlevant avant les contenus entre parenthèse (`FINGERPRINT_REORDERED_STOP_WORDS_EXTENDED`)
+* [2XX] Suite [normalisée](#normalisation) :
+  * [200] Match simple (`NORMALIZED`)
+  * [230] Match simple avec suppression de mots-vides (`NORMALIZED_STOP_WORDS`)
+  * [261] Match simple avec suppression de mots-vides & suppression étendue de mots (`NORMALIZED_STOP_WORDS_EXTENDED`)
+* [3XX] Suite [normalisée](#normalisation) avec suppression des contenus entre parenthèses :
+  * [300] Match simple (`NORMALIZED_NO_PARENTHESIS`)
+  * [330] Match simple avec suppression de mots-vides (`NORMALIZED_NO_PARENTHESIS_STOP_WORDS`)
+  * [361] Match simple avec suppression de mots-vides & suppression étendue de mots (`NORMALIZED_NO_PARENTHESIS_STOP_WORDS_EXTENDED`)
+* [4XX] Suite [fingerprint](#fingerprint) :
+  * [400] Match simple (`FINGERPRINT_REORDERED`)
+  * [430] Match simple avec suppression de mots-vides (`FINGERPRINT_REORDERED_STOP_WORDS`)
+  * [461] Match simple avec suppression de mots-vides & suppression étendue de mots  (`FINGERPRINT_REORDERED_STOP_WORDS_EXTENDED`)
 
+Lors de [l'exécution de l'application](#utiliser-lapplication), l'utilisateur choisit les étapes qu'il souhaite utiliser et leur ordre d'exécution.
+
+_Note technique : toutes les étapes utilisants des suppressions étendues de mots doivent avoir un identifiant terminant en `1`_
+
+### Normalisation
+
+1. Passe en miniscule
+1. `&` devient `et`
+1. `œ` devient `oe`
+1. Suppression des diacritiques
+1. Remplace le bruit par des espaces : `[\x21-\x2F]|[\x3A-\x40]|[\x5B-\x60]|[\x7B-\x7F]|[\u2010-\u2015]|\.|\,|\?|\!|\;|\/|\:|\=|\[|\]|\'|\-|\(|\)|\||\"|\<|\>|\+|\°`
+1. Remplace les multiples espaces par un seul espace
+
+### Suppression de mots-vides
+
+Supprime toutes les occurrences de chacun des [mots-vides du Sudoc](https://documentation.abes.fr/sudoc/manuels/interrogation/mots_vides/index.html#ListeMotsVidesAutresIndex) (version de fin 2023 je crois) et des opérateurs booléen de CBS (_All CBS Command_ Version 6 (2014-02-11), j'ai une copie de la page mais plus le lien original).
+
+### Suppression étendue de mots
+
+Supprime toutes les occurrences de chacun des termes présents dans [le fichier fourni](#fichier-attendu-pour-la-suppression-étendue-de-mots).
+
+### Fingerprint
+
+1. [Normalise](#normalisation)
+1. Supprime les mots dupliqués
+1. Réordonne les mots par ordre alphabétique
 
 ## Utiliser l'application
 
@@ -37,6 +66,21 @@ Cette méthode utilise plusieurs manières d'identifier une autorité correspond
   * `OUTPUT_PATH` : chemin d'accès pour le fichier de sortie contenant toutes les formes
   * `OUTPUT_SYNTHESIS_PATH` : chemin d'accès pour le fichier de sortie qui synthètise par identifiant
 * Exécuter l'application (`main.py`)
+
+Exemple de variables d'environnement :
+
+```
+EXTERNAL_THES_PATH="C:\Path\Archires_Thesaurus_Alignement\files\A609_refined.csv"
+EXTERNAL_THES_DELIMITER=";"
+EXTERNAL_THES_ID_COL="authid"
+INTERNAL_THES_PATH="C:\Path\Archires_Thesaurus_Alignement\files\SNG_refined.csv"
+INTERNAL_THES_DELIMITER=";"
+INTERNAL_THES_ID_COL="authid"
+STEPS="100,200,230,261,300,330,361,400,430,461"
+EXTENDED_WORDS_LIST="C:\Path\Archires_Thesaurus_Alignement\other\extended_words_geo_archires.txt"
+OUTPUT_PATH="C:\Path\Archires_Thesaurus_Alignement\files\results.csv"
+OUTPUT_SYNTHESIS_PATH="C:\Path\Archires_Thesaurus_Alignement\files\synthesis.csv"
+```
 
 ## Fichiers de thésaurus attendus
 
@@ -77,7 +121,7 @@ _Note : exemple pour un export de notices d'autorités géographiques, avec le l
   * Vérifier que la avleur dans _Line separator_ est `\n`
   * Cocher _Always quote text_
 
-## Fichier des termes supprimés attendus
+## Fichier attendu pour la suppression étendue de mots 
 
 * Un terme par ligne
 * Les termes doivent être :

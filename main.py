@@ -25,12 +25,31 @@ if os.path.exists(os.getenv("EXTENDED_WORDS_LIST")):
     with open(os.getenv("EXTENDED_WORDS_LIST"), "r", encoding="utf-8") as f:
         extended_words_list = f.read().splitlines()
 else:
-    print("Waring : extended words file was not found")
-    print("Ignoring all related steps")
+    print("Warning : extended words file was not found")
+if len(extended_words_list) == 0:
+    print("No extended words defined, ignoring all related steps")
+# -------- Load steps --------
+STEPS:List[Step] = []
+for step_id in  os.getenv("STEPS").split(","):
+    # Transform to an int the value
+    try:
+        step_id = int(step_id.strip())
+    except:
+        print(f"Warning : {step_id} is not a valid value, please write the ID of the step")
+        continue
+    # Check if this ID exists
+    if step_id in Step:
+        # If no extended words are defined, ignore related steps
+        if len(extended_words_list) == 0 and step_id%10 == 1:
+            print(f"Warning : ignoring step {Step(step_id).name} ({step_id})")
+            continue
+        STEPS.append(Step(step_id))
+    else:
+        print(f"Warning : no step with ID {step_id}")
 # -------- Load thesaurus --------
-external_thes = Thesaurus(os.getenv("EXTERNAL_THES_PATH"), os.getenv("EXTERNAL_THES_DELIMITER"), os.getenv("EXTERNAL_THES_ID_COL"), extended_words=extended_words_list)
+external_thes = Thesaurus(os.getenv("EXTERNAL_THES_PATH"), os.getenv("EXTERNAL_THES_DELIMITER"), os.getenv("EXTERNAL_THES_ID_COL"), STEPS, extended_words=extended_words_list)
 print(f"External thesaurus is loaded : {external_thes.nb_metaterms} terms")
-internal_thes = Thesaurus(os.getenv("INTERNAL_THES_PATH"), os.getenv("INTERNAL_THES_DELIMITER"), os.getenv("INTERNAL_THES_ID_COL"), extended_words=extended_words_list)
+internal_thes = Thesaurus(os.getenv("INTERNAL_THES_PATH"), os.getenv("INTERNAL_THES_DELIMITER"), os.getenv("INTERNAL_THES_ID_COL"), STEPS, extended_words=extended_words_list)
 print(f"Internal thesaurus is loaded : {internal_thes.nb_metaterms} terms")
 
 # -------- Prepare synthesis --------
@@ -49,7 +68,7 @@ def match_term(term:Term, is_pref:bool=True) -> dict:
         TSV_Headers.KEY_USED.value:None,
     }
     # Try to match once
-    for step in Step:
+    for step in STEPS:
         matched_ids = internal_thes.get_terms_id_by_form(term.forms[step], step)
         # If match, add it to output and break from loop
         if matched_ids:
@@ -60,7 +79,7 @@ def match_term(term:Term, is_pref:bool=True) -> dict:
                     output[TSV_Headers.INT_NAMES.value].append(matched_term.get_label())
                     output_synthesis_list[id].add_metaterm_match(matched_term.id, matched_term.get_label(), matched_term.get_label(is_pref=False), step)
             output[TSV_Headers.NB_MATCH.value] = len(matched_ids)
-            output[TSV_Headers.STEP.value] = step_for_output(step)
+            output[TSV_Headers.STEP.value] = step_for_output(step, STEPS)
             output[TSV_Headers.KEY_USED.value] = term.forms[step]
             break
     # Join lists
@@ -101,4 +120,4 @@ with open(os.getenv("OUTPUT_SYNTHESIS_PATH"), "w", newline="", encoding="utf-8")
     writer = csv.DictWriter(f, [val.value for val in TSV_Synthesis_Headers], delimiter="\t")
     writer.writeheader()
     for id in list(output_synthesis_list.keys()):
-        writer.writerow(output_synthesis_list[id].CSV_output())
+        writer.writerow(output_synthesis_list[id].CSV_output(STEPS))

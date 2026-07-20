@@ -8,27 +8,27 @@ from ress.enums import Step
 from ress.class_terms import Metaterm, Term
 
 class Thesaurus(object):
-    def __init__(self, file_path:str, delimiter:str, id_col_name:str, extended_words:List[str]=[]):
+    def __init__(self, file_path:str, delimiter:str, id_col_name:str, steps:List[Step], extended_words:List[str]=[]):
         self.file_path:str = file_path
         self.delimiter:str = delimiter
         # Makes sure that escaped strigns are not escaped
         if "\\" in self.delimiter:
             self.delimiter = self.delimiter.encode("latin-1", "backslashreplace").decode("unicode-escape")
         self.id_col_name:str = id_col_name
+        self.steps:List[Step] = steps
         self.extended_words:List[str] = extended_words
-        # self.term_index:dict[str, Term] = {} # orignal one
+        # Index by auth ID of all meta terms
         self.term_index:dict[str, Metaterm] = {}
+        # For each step, index by label with step transformation,
+        # containing as value all Metaterms ID using this label for this step
         self.indexes:Dict[Step, Dict[str, List[str]]] = {}
-        for step in Step:
+        for step in self.steps:
             self.indexes[step] = {}
         # read data from the file
         with open(self.file_path, "r", encoding="utf-8") as f:
             csv_reader = csv.DictReader(f, delimiter=self.delimiter)
             for row in csv_reader:
                 self.add_term(row[self.id_col_name], row["prefLabel"], row["altLabel"])
-                # term = Term(row[self.id_col_name], row["prefLabel@fr"])
-                # # Add the term to the ID-Term index
-                # self.term_index[term.id] = term
         # Add each form to its index
         for id in list(self.term_index.keys()):
             for pref_label_term in self.term_index[id].pref_labels:
@@ -63,7 +63,6 @@ class Thesaurus(object):
     def nb_metaterms(self):
         return len(list(self.term_index.keys()))
 
-    # Passer ça en meta term et voir comment a foncitonen avec l'autre
     def get_metaterm_by_id(self, id:str) -> Metaterm|None:
         if id in self.term_index:
             return self.term_index[id]

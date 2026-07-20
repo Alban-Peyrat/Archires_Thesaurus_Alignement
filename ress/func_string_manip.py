@@ -25,7 +25,7 @@ def prep_string(_str:str, _noise = True, _multiplespaces = True) -> str:
 def remove_extended_stop_words(txt:str, words_list:List[str]) -> str:
     """Deleted every extended stop words"""
     for word in words_list:
-        txt = txt.replace(word, " ")
+        txt = re.sub(r"\b" + word + r"\b", " ", txt, flags=re.IGNORECASE)
     return txt
     
 def delete_CBS_boolean_operators(txt:str) -> str:
@@ -41,10 +41,10 @@ def delete_Sudoc_empty_words(txt:str) -> str:
 
 # not from FCR
 def sort_words(txt:str) -> str:
-    """Returns the string sorting all the elements"""
-    return " ".join(sorted(txt.split()))
+    """Returns the string sorting all the elements and removing duplicate words"""
+    return " ".join(sorted(set(txt.split())))
 
-def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:List[str]=[], no_parenthesis:bool=False) -> str:
+def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:List[str]=[], no_parenthesis:bool=False, reorder:bool=False) -> str:
     """Returns the string using a kind of fingerprint"""
     txt = txt.lower()
     txt = txt.replace('&', 'et')
@@ -69,4 +69,6 @@ def fingerprint(txt:str, stop_words:bool=False, stop_words_extended:List[str]=[]
         txt = remove_extended_stop_words(txt, stop_words_extended)
     # Retrigger final prep string just in case
     txt = prep_string(txt)
-    return sort_words(txt)
+    if reorder:
+        return sort_words(txt)
+    return txt
