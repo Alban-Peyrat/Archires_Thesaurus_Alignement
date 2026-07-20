@@ -13,10 +13,6 @@ from ress.class_terms import Term
 from ress.class_synthesis import Synthesis_Metaterm
 from ress.func_enums import step_for_output
 
-# To do :
-# - user should be able to chose wich steps they want
-# list of other terms should be another file 
-
 # ----------------- Load configs -----------------
 load_dotenv()
 # -------- Load extended words --------

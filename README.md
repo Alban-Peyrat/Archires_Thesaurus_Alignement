@@ -16,7 +16,7 @@ Ce script peut utiliser plusieurs étapes pour aligner des autorités :
   * [200] Match simple (`NORMALIZED`)
   * [230] Match simple avec suppression de mots-vides (`NORMALIZED_STOP_WORDS`)
   * [261] Match simple avec suppression de mots-vides & suppression étendue de mots (`NORMALIZED_STOP_WORDS_EXTENDED`)
-* [3XX] Suite [normalisée](#normalisation) avec suppression des contenus entre parenthèses :
+* [3XX] Suite [fingerprint](#fingerprint) avec suppression des contenus entre parenthèses :
   * [300] Match simple (`NORMALIZED_NO_PARENTHESIS`)
   * [330] Match simple avec suppression de mots-vides (`NORMALIZED_NO_PARENTHESIS_STOP_WORDS`)
   * [361] Match simple avec suppression de mots-vides & suppression étendue de mots (`NORMALIZED_NO_PARENTHESIS_STOP_WORDS_EXTENDED`)
